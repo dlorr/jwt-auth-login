@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import { PublicUserKeys } from "../types/user.type";
 import { compareValue, hashValue } from "../utils/bcrypt";
+
+type PublicUserKeys = "_id" | "email" | "verified" | "createdAt" | "updatedAt";
 
 export interface UserDocument extends mongoose.Document {
   email: string;

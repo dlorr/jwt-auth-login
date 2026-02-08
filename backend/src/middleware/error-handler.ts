@@ -1,10 +1,27 @@
 import { Response, ErrorRequestHandler } from "express";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../constants/http-status";
+import {
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+} from "../constants/http-status";
 import { z } from "zod";
 import { clearAuthCookies, REFRESH_PATH } from "../utils/auth-cookies";
 import CustomError from "../utils/custom-error";
 
-const handleZodErrror = (res: Response, error: z.ZodError) => {
+const handleZodErrror = (
+  res: Response,
+  error: z.ZodError,
+  reqPath?: string,
+) => {
+  // console.log(error.issues[0].path);
+  // console.log(error.issues);
+  // Check if the error is for email verification
+  // if (reqPath?.includes("/email/verify")) {
+  //   return res.status(NOT_FOUND).json({
+  //     message: "", // generic for security
+  //   });
+  // }
+
   const errors = error.issues.map((err) => ({
     path: err.path.join("."),
     message: err.message,
@@ -12,7 +29,7 @@ const handleZodErrror = (res: Response, error: z.ZodError) => {
 
   res.status(BAD_REQUEST).json({
     errors,
-    message: error.message,
+    message: "Validation failed.",
   });
 };
 
@@ -28,12 +45,12 @@ const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     clearAuthCookies(res);
   }
   if (error instanceof z.ZodError) {
-    return handleZodErrror(res, error);
+    return handleZodErrror(res, error, req.path);
   }
   if (error instanceof CustomError) {
     return handleAppError(res, error);
   }
-  res.status(INTERNAL_SERVER_ERROR).send("Internal server error");
+  res.status(INTERNAL_SERVER_ERROR).send("Internal server error.");
 };
 
 export default errorHandler;

@@ -7,6 +7,9 @@ import { APP_ORIGIN, PORT } from "./constants/env";
 import connectToDb from "./config/db.config";
 import authRouter from "./routes/auth.route";
 import errorHandler from "./middleware/error-handler";
+import authenticate from "./middleware/authenticate";
+import userRouter from "./routes/user.route";
+import sessionRouter from "./routes/session.route";
 
 const app = express();
 
@@ -31,6 +34,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/auth", authRouter);
+//protected routes
+app.use("/user", authenticate, userRouter);
+app.use("/session", authenticate, sessionRouter);
 
 app.use(errorHandler);
 

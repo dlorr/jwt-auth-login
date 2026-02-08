@@ -21,18 +21,18 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(8, { message: "Password must be at least 8 characters" })
-  .max(100, { message: "Password cannot exceed 100 characters" })
-  .regex(AT_LEAST_ONE_NUMBER, { message: "At least one number is required" })
-  .regex(AT_LEAST_ONE_LETTER, { message: "At least one letter is required" })
+  .min(8, { message: "Password must be at least 8 characters." })
+  .max(100, { message: "Password cannot exceed 100 characters." })
+  .regex(AT_LEAST_ONE_NUMBER, { message: "At least one number is required." })
+  .regex(AT_LEAST_ONE_LETTER, { message: "At least one letter is required." })
   .regex(AT_LEAST_ONE_LOWERCASE, {
-    message: "At least one lowercase letter is required",
+    message: "At least one lowercase letter is required.",
   })
   .regex(AT_LEAST_ONE_UPPERCASE, {
-    message: "At least one uppercase letter is required",
+    message: "At least one uppercase letter is required.",
   })
   .regex(AT_LEAST_ONE_SPECIAL_CHAR, {
-    message: "At least one special character is required",
+    message: "At least one special character is required.",
   });
 
 /**
@@ -40,8 +40,8 @@ export const passwordSchema = z
  */
 export const confirmPasswordSchema = z
   .string()
-  .min(8, { message: "Confirm password must be at least 8 characters" })
-  .max(100, { message: "Confirm password cannot exceed 100 characters" });
+  .min(8, { message: "Confirm password must be at least 8 characters." })
+  .max(100, { message: "Confirm password cannot exceed 100 characters." });
 
 /**
  * Register Schema
@@ -54,7 +54,7 @@ export const registerSchema = z
     userAgent: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
@@ -72,8 +72,7 @@ export const loginSchema = z.object({
  */
 export const verificationCodeSchema = z
   .string()
-  .min(6, { message: "Verification code must be at least 6 characters" })
-  .max(24, { message: "Verification code cannot exceed 24 characters" });
+  .length(24, { message: "Invalid or expired verification code." });
 
 /**
  * Request Password Schema
@@ -85,7 +84,7 @@ export const requestPasswordSchema = z
     confirmPassword: confirmPasswordSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
@@ -94,4 +93,4 @@ export const requestPasswordSchema = z
  */
 export const sessionSchema = z
   .string()
-  .length(24, { message: "Invalid session id" });
+  .length(24, { message: "Invalid session id." });
