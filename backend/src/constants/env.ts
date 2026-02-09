@@ -1,6 +1,6 @@
 import getEnv from "../config/env.config";
 
-export const NODE_ENV = getEnv("NODE_ENV", "development");
+export const APP_ENV = getEnv("APP_ENV", "development");
 export const PORT = getEnv("PORT", "8005");
 export const APP_ORIGIN = getEnv("APP_ORIGIN", "http://localhost:3005");
 export const MONGO_URI = getEnv("MONGO_URI");
