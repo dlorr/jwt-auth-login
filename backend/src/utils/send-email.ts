@@ -1,5 +1,5 @@
 import resend from "../config/resend.config";
-import { EMAIL_SENDER, NODE_ENV } from "../constants/env";
+import { APP_ENV, EMAIL_SENDER } from "../constants/env";
 
 type Params = {
   to: string;
@@ -8,10 +8,10 @@ type Params = {
   html: string;
 };
 const getFromEmail = () => {
-  return NODE_ENV === "development" ? "onboarding@resend.dev" : EMAIL_SENDER;
+  return APP_ENV === "development" ? "onboarding@resend.dev" : EMAIL_SENDER;
 };
 const getToEmail = (to: string) => {
-  return NODE_ENV === "development" ? "delivered@resend.dev" : to;
+  return APP_ENV === "development" ? "delivered@resend.dev" : to;
 };
 export const sendEmail = async ({ to, subject, text, html }: Params) => {
   return resend.emails.send({
