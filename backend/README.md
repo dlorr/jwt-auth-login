@@ -102,7 +102,7 @@ npm run build
 #### Start Production Server
 
 ```bash
-npm start
+npm run start
 ```
 
 - Runs compiled server from /dist/
@@ -131,7 +131,8 @@ npm start
 
 ### ✅ Status
 
-- Backend API is fully functional with:
+Backend API is **fully functional** with:
+
 - User registration & login
 - JWT authentication
 - Password hashing

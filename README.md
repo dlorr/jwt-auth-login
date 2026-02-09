@@ -2,8 +2,6 @@
 
 This is a **JWT Authentication Login** project structured as a monorepo, containing separate frontend and backend packages.
 
----
-
 - **Backend:** Built with **Express**, **TypeScript**, and **MongoDB**. Handles user registration, login, JWT authentication, and email sending.
 - **Frontend:** Built with **React**, **TypeScript**, **TailwindCSS**, and **React Query**. Currently in development.
 
@@ -11,10 +9,12 @@ This is a **JWT Authentication Login** project structured as a monorepo, contain
 
 ## 📂 Project Structure
 
+```
 / (root)
 ├── frontend/ # React frontend
 ├── backend/ # Express backend
 └── README.md # This file
+```
 
 ---
 
@@ -29,7 +29,7 @@ This is a **JWT Authentication Login** project structured as a monorepo, contain
 
 ---
 
-### Running the Project
+### 🏃 Running the Project
 
 #### Backend
 
@@ -55,18 +55,18 @@ The frontend will run on `http://localhost:3005`
 
 ---
 
-## Notes
+## 🧠 Notes
 
 - Frontend is under development and may not yet connect fully to the backend.
 - Backend includes JWT authentication, password hashing with bcrypt, and email functionality with Resend.
-- Environment variables should be defined in .env files in each package.
+- Environment variables should be defined in `.env` files in each package.
 
 ---
 
-## References
+## 📁 References
 
-Backend: `backend/README.md`
-Frontend: `frontend/README.md`
+- [Backend README](./backend/README.md)
+- [Frontend README](./frontend/README.md)
 
 ---
 
