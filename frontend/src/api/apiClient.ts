@@ -1,4 +1,8 @@
-import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
+import axios, {
+  type AxiosError,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from "axios";
 import queryClient from "../config/queryClient";
 import { navigate } from "../lib/navigation";
 
@@ -8,25 +12,37 @@ const options = {
 };
 
 const TokenRefreshClient = axios.create(options);
-TokenRefreshClient.interceptors.response.use((response) => response.data);
+TokenRefreshClient.interceptors.response.use(
+  (response: AxiosResponse) => response.data,
+);
 
 const API = axios.create(options);
 
+type ErrorResponse = {
+  errors?: Array<{
+    path: string;
+    message: string;
+  }>;
+  message?: string;
+  errorCode?: string;
+};
+
 API.interceptors.response.use(
-  (response) => response.data,
-  async (error: AxiosError<{ errorCode?: string }>) => {
-    const config = error.config as AxiosRequestConfig;
-    const status = error.response?.status;
-    const data = error.response?.data;
+  (response: AxiosResponse) => response.data,
+  async (error: AxiosError<ErrorResponse>) => {
+    const { config } = error;
+    const { status, data } = error.response || {};
 
     if (status === 401 && data?.errorCode === "InvalidAccessToken") {
       try {
         await TokenRefreshClient.get("/auth/refresh");
-        return TokenRefreshClient(config);
-      } catch (err) {
+        return TokenRefreshClient(config as InternalAxiosRequestConfig);
+      } catch (refreshError) {
         queryClient.clear();
         navigate("/login", {
-          state: { redirectUrl: window.location.pathname },
+          state: {
+            redirectUrl: window.location.pathname,
+          },
         });
       }
     }
