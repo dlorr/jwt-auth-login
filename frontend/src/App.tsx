@@ -6,6 +6,7 @@ import Register from "@/pages/Register";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
+import VerifyEmailLayout from "./components/layout/VerifyEmailLayout";
 
 const App = () => {
   return (
@@ -17,6 +18,9 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
+
+      {/* Email verify — always accessible regardless of auth state */}
+      <Route path="/email/verify/:code" element={<VerifyEmailLayout />} />
 
       {/* Protected pages — redirects to /login if not authenticated */}
       <Route element={<ProtectedLayout />}>

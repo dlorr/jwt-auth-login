@@ -89,14 +89,11 @@ export const useResetPassword = () => {
 };
 
 // ── Verify Email ──────────────────────────────────────────
-export const useVerifyEmail = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (code: string) => verifyEmailApi(code),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
-    },
+export const useVerifyEmail = (code: string | undefined) => {
+  return useQuery({
+    queryKey: ["verifyEmail", code],
+    queryFn: () => verifyEmailApi(code!),
+    retry: false,
   });
 };
 
