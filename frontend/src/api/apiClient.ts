@@ -1,54 +1,83 @@
-import axios, {
-  type AxiosError,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig,
-} from "axios";
-import queryClient from "../config/queryClient";
-import { navigate } from "../lib/navigation";
+import axios from "axios";
 
-const options = {
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8005",
+  withCredentials: true, // send cookies with every request
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// ── Response interceptor: 401 + InvalidAccessToken → refresh → retry ─────
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown) => {
+  failedQueue.forEach((prom) => (error ? prom.reject(error) : prom.resolve()));
+  failedQueue = [];
 };
 
-const TokenRefreshClient = axios.create(options);
-TokenRefreshClient.interceptors.response.use(
-  (response: AxiosResponse) => response.data,
-);
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-const API = axios.create(options);
+    const isUnauthorized = error.response?.status === 401;
+    const isInvalidAccessToken =
+      error.response?.data?.errorCode === "InvalidAccessToken";
 
-type ErrorResponse = {
-  errors?: Array<{
-    path: string;
-    message: string;
-  }>;
-  message?: string;
-  errorCode?: string;
-};
+    // Attempt token refresh for ANY 401 InvalidAccessToken,
+    // EXCEPT when the failing request is already the refresh endpoint itself.
+    if (
+      (isUnauthorized || isInvalidAccessToken) &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      if (originalRequest.url?.includes("/auth/")) {
+        // Return formatted error for auth endpoints
+        return Promise.reject(error);
+      }
+      if (isRefreshing) {
+        // Queue other requests that come in while refresh is in-flight
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
 
-API.interceptors.response.use(
-  (response: AxiosResponse) => response.data,
-  async (error: AxiosError<ErrorResponse>) => {
-    const { config } = error;
-    const { status, data } = error.response || {};
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-    if (status === 401 && data?.errorCode === "InvalidAccessToken") {
       try {
-        await TokenRefreshClient.get("/auth/refresh");
-        return TokenRefreshClient(config as InternalAxiosRequestConfig);
+        await api.get("/auth/refresh");
+        processQueue(null);
+        isRefreshing = false;
+        // Retry the original request (including the /user fetch on page load)
+        return api(originalRequest);
       } catch (refreshError) {
-        queryClient.clear();
-        navigate("/login", {
-          state: {
-            redirectUrl: window.location.pathname,
-          },
-        });
+        processQueue(refreshError);
+        isRefreshing = false;
+
+        const currentPath = window.location.pathname;
+        if (
+          !currentPath.startsWith("/login") &&
+          !currentPath.startsWith("/register") &&
+          !currentPath.startsWith("/password") &&
+          !currentPath.startsWith("/email")
+        ) {
+          // Use window.location.href for hard reload to clear all state
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject({ status, ...data });
+    return Promise.reject(error);
   },
 );
 
-export default API;
+export default api;
