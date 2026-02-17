@@ -13,14 +13,11 @@ const handleZodErrror = (
   error: z.ZodError,
   reqPath?: string,
 ) => {
-  // console.log(error.issues[0].path);
-  // console.log(error.issues);
-  // Check if the error is for email verification
-  // if (reqPath?.includes("/email/verify")) {
-  //   return res.status(NOT_FOUND).json({
-  //     message: "", // generic for security
-  //   });
-  // }
+  if (reqPath?.includes("/email/verify")) {
+    return res.status(NOT_FOUND).json({
+      message: "Invalid or expired verification code.",
+    });
+  }
 
   const errors = error.issues.map((err) => ({
     path: err.path.join("."),
