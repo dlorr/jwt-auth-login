@@ -1,30 +1,32 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import ProtectedLayout from "./layouts/ProtectedLayout";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Login from "./pages/Login";
-import AuthLayout from "./layouts/AuthLayout";
-import Register from "./pages/Register";
-import { useEffect } from "react";
-import { setNavigate } from "./lib/navigation";
+import { Routes, Route, Navigate } from "react-router-dom";
+import AuthLayout from "@/components/layout/AuthLayout";
+import ProtectedLayout from "@/components/layout/ProtectedLayout";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
+import NotFound from "@/pages/NotFound";
 
-export default function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setNavigate(navigate);
-  }, [navigate]);
-
+const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<ProtectedLayout />}>
-        <Route index element={<Profile />} />
-        <Route path="settings" element={<Settings />} />
-      </Route>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Public auth pages — redirects to /profile when already logged in */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
+
+      {/* Protected pages — redirects to /login if not authenticated */}
+      <Route element={<ProtectedLayout />}>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
-}
+};
+
+export default App;

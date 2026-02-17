@@ -1,0 +1,72 @@
+interface LogoProps {
+  size?: "sm" | "md" | "lg";
+  showText?: boolean;
+}
+
+const sizeConfig = {
+  sm: { icon: 26, text: "text-lg" },
+  md: { icon: 34, text: "text-xl" },
+  lg: { icon: 42, text: "text-2xl" },
+};
+
+const Logo = ({ size = "md", showText = true }: LogoProps) => {
+  const config = sizeConfig[size];
+
+  return (
+    <div className="flex items-center gap-2.5">
+      {/* Aegis shield icon */}
+      <svg
+        width={config.icon}
+        height={config.icon}
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Shield body */}
+        <path
+          d="M20 3L5 9V20C5 28.5 11.5 35.5 20 38C28.5 35.5 35 28.5 35 20V9L20 3Z"
+          fill="hsl(var(--primary) / 0.12)"
+          stroke="hsl(var(--primary))"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        {/* Inner lock keyhole */}
+        <circle
+          cx="20"
+          cy="18"
+          r="4"
+          stroke="hsl(var(--primary))"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M17.5 22V26H22.5V22"
+          stroke="hsl(var(--primary))"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Subtle cross-hatch on shield */}
+        <path
+          d="M11 13.5L29 13.5"
+          stroke="hsl(var(--primary) / 0.3)"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      {showText && (
+        <span
+          className={`font-bold tracking-tight text-foreground ${config.text}`}
+          style={{
+            fontFamily: "var(--font-display)",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Aegis
+        </span>
+      )}
+    </div>
+  );
+};
+
+export default Logo;

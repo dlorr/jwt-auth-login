@@ -1,25 +1,108 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
-import { getUser, type User } from "../api/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import {
+  loginApi,
+  logoutApi,
+  registerApi,
+  forgotPasswordApi,
+  resetPasswordApi,
+  verifyEmailApi,
+} from "@/api/auth";
+import type {
+  LoginPayload,
+  RegisterPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
+} from "@/types";
+import { getUserApi, resendVerificationApi } from "@/api/user";
 
-export const AUTH = "auth" as const;
+export const USER_QUERY_KEY = ["user"] as const;
 
-type UseAuthOptions = Omit<
-  UseQueryOptions<User, Error, User, [string]>,
-  "queryKey" | "queryFn"
->;
-
-const useAuth = (opts: UseAuthOptions = {}) => {
-  const { data: user, ...rest } = useQuery({
-    queryKey: [AUTH],
-    queryFn: getUser,
-    staleTime: Infinity,
-    ...opts,
+// ── Current User Query ────────────────────────────────────
+export const useUser = () => {
+  return useQuery({
+    queryKey: USER_QUERY_KEY,
+    queryFn: getUserApi,
+    retry: false,
   });
-
-  return {
-    user,
-    ...rest,
-  };
 };
 
-export default useAuth;
+// ── Login ─────────────────────────────────────────────────
+export const useLogin = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: LoginPayload) => loginApi(data),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
+      navigate("/profile");
+    },
+  });
+};
+
+// ── Register ──────────────────────────────────────────────
+export const useRegister = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: RegisterPayload) => registerApi(data),
+    onSuccess: async (user) => {
+      queryClient.setQueryData(USER_QUERY_KEY, user);
+      navigate("/profile");
+    },
+  });
+};
+
+// ── Logout ────────────────────────────────────────────────
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: logoutApi,
+    onSettled: () => {
+      queryClient.clear();
+      navigate("/login");
+    },
+  });
+};
+
+// ── Forgot Password ───────────────────────────────────────
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (data: ForgotPasswordPayload) => forgotPasswordApi(data),
+  });
+};
+
+// ── Reset Password ────────────────────────────────────────
+export const useResetPassword = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: ResetPasswordPayload) => resetPasswordApi(data),
+    onSuccess: () => {
+      setTimeout(() => navigate("/login"), 2000);
+    },
+  });
+};
+
+// ── Verify Email ──────────────────────────────────────────
+export const useVerifyEmail = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (code: string) => verifyEmailApi(code),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
+    },
+  });
+};
+
+// ── Resend Verification ───────────────────────────────────
+export const useResendVerification = () => {
+  return useMutation({
+    mutationFn: resendVerificationApi,
+  });
+};
