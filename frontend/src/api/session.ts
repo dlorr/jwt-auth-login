@@ -4,7 +4,7 @@ import type { Session } from "@/types";
 // ── Sessions ─────────────────────────────────────────────
 
 export const getSessionsApi = async (): Promise<Session[]> => {
-  const res = await api.get<Session[]>("/session/all");
+  const res = await api.get<Session[]>("/session/sessions");
   return res.data;
 };
 

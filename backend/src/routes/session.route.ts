@@ -3,7 +3,7 @@ import { deleteSession, getSessions } from "../controllers/session.controller";
 
 const sessionRouter = Router();
 
-sessionRouter.get("/all", getSessions);
+sessionRouter.get("/sessions", getSessions);
 sessionRouter.delete("/:id", deleteSession);
 
 export default sessionRouter;

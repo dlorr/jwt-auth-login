@@ -110,7 +110,7 @@ const AuthLayout = () => {
             >
               Your identity,
               <br />
-              locked in a{" "}
+              protected by{" "}
               <span
                 className="relative inline-block"
                 style={{ color: "hsl(var(--primary))" }}
@@ -126,8 +126,9 @@ const AuthLayout = () => {
               </span>
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              JWT-powered auth with rotating refresh tokens, per-device
-              sessions, and email verification.
+              Fortified authentication with rotating sessions, multi-device
+              management, and email verification — your access, shielded at
+              every layer.
             </p>
           </div>
 

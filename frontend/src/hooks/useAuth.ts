@@ -23,7 +23,6 @@ export const useUser = () => {
   return useQuery({
     queryKey: USER_QUERY_KEY,
     queryFn: getUserApi,
-    retry: false,
   });
 };
 
@@ -93,7 +92,7 @@ export const useVerifyEmail = (code: string | undefined) => {
   return useQuery({
     queryKey: ["verifyEmail", code],
     queryFn: () => verifyEmailApi(code!),
-    retry: false,
+    staleTime: Infinity,
   });
 };
 
