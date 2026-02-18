@@ -3,7 +3,7 @@ import { parseUserAgent, formatDate } from "@/lib/utils";
 import Spinner from "@/components/ui/Spinner";
 
 const Settings = () => {
-  const { data: sessions, isLoading, isError } = useSessions();
+  const { data: sessions, isLoading, isError, dataUpdatedAt } = useSessions();
   const {
     mutate: deleteSession,
     isPending: isDeleting,
@@ -31,7 +31,8 @@ const Settings = () => {
                 Active Sessions
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Devices currently logged into your account.
+                Devices currently logged into your account. Last updated:{" "}
+                {new Date(dataUpdatedAt).toLocaleTimeString()}.
               </p>
             </div>
             {sessions && sessions.length > 0 && (

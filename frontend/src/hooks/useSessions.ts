@@ -7,6 +7,7 @@ export const useSessions = () => {
   return useQuery({
     queryKey: SESSIONS_QUERY_KEY,
     queryFn: getSessionsApi,
+    refetchInterval: 60_000,
   });
 };
 
