@@ -7,6 +7,8 @@ import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import VerifyEmailLayout from "./components/layout/VerifyEmailLayout";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/password/forgot" element={<ForgotPassword />} />
+        <Route path="/password/reset" element={<ResetPassword />} />
       </Route>
 
       {/* Email verify — always accessible regardless of auth state */}

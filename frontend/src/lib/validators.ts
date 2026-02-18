@@ -4,6 +4,8 @@ const AT_LEAST_ONE_LETTER = /[a-zA-Z]+/;
 const AT_LEAST_ONE_LOWERCASE = /[a-z]+/;
 const AT_LEAST_ONE_UPPERCASE = /[A-Z]+/;
 const AT_LEAST_ONE_SPECIAL_CHAR = /[@$!%*?&]+/;
+const VALID_EMAIL =
+  /^[a-zA-Z0-9]+([._-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*\.[a-zA-Z]{2,}$/;
 
 // ── Individual field validators ─────────────────────────────────────────────
 
@@ -11,8 +13,7 @@ export const validateEmail = (value: string): string | undefined => {
   if (!value.trim()) return "Email is required.";
   if (value.length < 6) return "Email must be at least 6 characters.";
   if (value.length > 100) return "Email cannot exceed 100 characters.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-    return "Invalid email address.";
+  if (!VALID_EMAIL.test(value)) return "Invalid email address.";
 };
 
 export const validatePassword = (value: string): string | undefined => {
@@ -48,13 +49,4 @@ export const validateConfirmPassword = (
   if (value.length > 100)
     return "Confirm password cannot exceed 100 characters.";
   if (value !== password) return "Passwords do not match.";
-};
-
-// ── Legacy grouped export (used by pages that import { validators }) ─────────
-// Keep backward-compatible so existing pages still work without edits.
-export const validators = {
-  email: validateEmail,
-  password: validatePassword,
-  loginPassword: validateLoginPassword,
-  confirmPassword: validateConfirmPassword,
 };
