@@ -113,7 +113,7 @@ const ProtectedLayout = () => {
           {/* Desktop right section */}
           <div className="hidden sm:flex items-center gap-3">
             <div className="flex flex-col items-end">
-              <span className="text-sm font-medium text-foreground leading-none truncate max-w-[160px]">
+              <span className="text-sm font-medium text-foreground leading-none truncate max-w-40">
                 {user.email}
               </span>
               <span
