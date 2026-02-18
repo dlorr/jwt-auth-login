@@ -209,8 +209,11 @@ export const verifyUserEmail = async (code: string) => {
   );
   appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify email.");
 
-  //delete verification code
-  await validCode.deleteOne();
+  //delete all existing verification code for this user
+  await VerificationCodeModel.deleteMany({
+    userId: validCode.userId,
+    type: Verification.EmailVerification,
+  });
 
   //return user
   return {
