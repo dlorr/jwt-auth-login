@@ -11,56 +11,8 @@ import FormField from "@/components/ui/FormField";
 import Alert from "@/components/ui/Alert";
 import Spinner from "@/components/ui/Spinner";
 import type { FieldErrors } from "@/types";
-
-const EyeIcon = ({ open }: { open: boolean }) =>
-  open ? (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  ) : (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-
-// Password strength: checks all 5 backend rules
-const getStrength = (
-  pw: string,
-): { level: 0 | 1 | 2 | 3 | 4; label: string; color: string } => {
-  if (!pw) return { level: 0, label: "", color: "" };
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[a-z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
-  if (/[@$!%*?&]/.test(pw)) score++;
-
-  if (score <= 1) return { level: 1, label: "Weak", color: "bg-red-500" };
-  if (score === 2) return { level: 2, label: "Fair", color: "bg-amber-500" };
-  if (score <= 4) return { level: 3, label: "Good", color: "bg-yellow-400" };
-  return { level: 4, label: "Strong", color: "bg-emerald-500" };
-};
+import EyeIcon from "@/components/ui/EyeIcon";
+import PasswordStrengthBar from "@/components/ui/PasswordStrengthBar";
 
 const Register = () => {
   const { mutate: register, isPending } = useRegister();
@@ -99,8 +51,6 @@ const Register = () => {
       },
     );
   };
-
-  const strength = getStrength(password);
 
   return (
     <div>
@@ -167,41 +117,8 @@ const Register = () => {
             </div>
 
             {/* Strength bar — 4 segments matching 5 backend rules */}
-            {password.length > 0 && (
-              <div className="mt-2 space-y-1.5">
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                        i <= strength.level ? strength.color : "bg-border"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] text-muted-foreground">
-                    Use 8+ chars · uppercase · lowercase · number · special
-                    (@$!%*?&)
-                  </p>
-                  {strength.label && (
-                    <span
-                      className={`text-[11px] font-medium ${
-                        strength.level === 4
-                          ? "text-emerald-400"
-                          : strength.level === 3
-                            ? "text-yellow-400"
-                            : strength.level === 2
-                              ? "text-amber-400"
-                              : "text-red-400"
-                      }`}
-                    >
-                      {strength.label}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
+            <PasswordStrengthBar password={password} />
+
             {fieldErrors.password && (
               <p className="field-error" role="alert">
                 {fieldErrors.password}
