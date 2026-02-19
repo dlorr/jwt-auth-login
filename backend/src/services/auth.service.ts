@@ -209,8 +209,11 @@ export const verifyUserEmail = async (code: string) => {
   );
   appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify email.");
 
-  //delete verification code
-  await validCode.deleteOne();
+  //delete all existing verification code for this user
+  await VerificationCodeModel.deleteMany({
+    userId: validCode.userId,
+    type: Verification.EmailVerification,
+  });
 
   //return user
   return {
@@ -221,7 +224,7 @@ export const verifyUserEmail = async (code: string) => {
 export const sendPasswordResetEmail = async (email: string) => {
   //get user by email
   const user = await UserModel.findOne({ email });
-  appAssert(user, NOT_FOUND, "User not found.");
+  if (!user) return;
 
   //check email rate limit
   const fiveMinsAgo = fiveMinutesAgo();
