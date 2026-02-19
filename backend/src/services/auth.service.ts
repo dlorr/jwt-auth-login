@@ -224,7 +224,7 @@ export const verifyUserEmail = async (code: string) => {
 export const sendPasswordResetEmail = async (email: string) => {
   //get user by email
   const user = await UserModel.findOne({ email });
-  appAssert(user, NOT_FOUND, "User not found.");
+  if (!user) return;
 
   //check email rate limit
   const fiveMinsAgo = fiveMinutesAgo();
