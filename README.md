@@ -200,7 +200,7 @@ npm run build        # Builds both backend and frontend
 
 ## 📄 License
 
-MIT License — Free to use for personal and commercial projects.
+ISC License — Free to use for personal and commercial projects.
 
 ---
 
